@@ -77,6 +77,8 @@ export async function register(req, res){
 
 }
 
+
+
 export async function getMe(req, res) {
     const token = req.headers.authorization?.split(" ")[1]
 
@@ -182,4 +184,30 @@ export async function logout(req, res){
     res.status(200).json({
         message: "logout successfully"
     })
+}
+
+export async function logoutAll(req, res){
+    const refreshToken = req.cookies.refreshToken
+
+    if(!refreshToken){
+        return res.status(400).json({
+            message: "refresh token not found"
+        })
+    }
+
+    const decoded = jwt.verify(refreshToken, config.JWT_SECRET)
+
+    await sessionModel.updateMany({
+        user: decoded.id,
+        revoked: false
+    },{
+        revoked: true
+    })
+
+    res.clearCookie("refreshToken")
+
+    res.status(200).json({
+        message: "logged out from all devices successfully"
+    })
+
 }
