@@ -15,4 +15,6 @@ authRouter.get("/logout", authController.logout)
 
 authRouter.get("/logout-all", authController.logoutAll)
 
+authRouter.post("/login", authController.login)
+
 export default authRouter
